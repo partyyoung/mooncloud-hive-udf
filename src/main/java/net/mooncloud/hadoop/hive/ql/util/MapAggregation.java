@@ -78,10 +78,11 @@ public class MapAggregation {
 			// while (aKeyListIter.hasNext()) {
 			String aKey = aKeyList.get(0);// aKeyListIter.next();
 			Object avalue = a.get(aKey);
-			// aKeyList.remove(aKey);
-			// a.remove(aKey);
+			aKeyList.remove(aKey);
+			a.remove(aKey);
 			ArrayList<Object> aValueList = new ArrayList<Object>();
 			HashSet<Object> aValueSet = new HashSet<Object>();
+			aValueSet.add(aKey);
 			if (avalue != null) {
 				if (avalue instanceof Collection)
 					aValueList.addAll((Collection) avalue);

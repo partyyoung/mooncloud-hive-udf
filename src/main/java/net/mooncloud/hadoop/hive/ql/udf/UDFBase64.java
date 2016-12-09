@@ -21,6 +21,7 @@ package net.mooncloud.hadoop.hive.ql.udf;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDF;
+import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 
@@ -38,14 +39,15 @@ public class UDFBase64 extends UDF {
 		return result;
 	}
 
-	public Text evaluate(BytesWritable b, Text alphabet) {
+	public Text evaluate(BytesWritable b, Text alphabet) throws Exception {
 		if (b == null || alphabet == null) {
 			return null;
 		}
 
 		char[] CA = alphabet.toString().toCharArray();
 		if (CA.length != 64) {
-			throw new IllegalArgumentException("The length of alphabet must be 64.");
+			throw new UDFArgumentTypeException(0,
+					"The length of alphabet must be 64.");
 		}
 
 		net.mooncloud.hadoop.hive.ql.util.Base64.alphabet(CA);

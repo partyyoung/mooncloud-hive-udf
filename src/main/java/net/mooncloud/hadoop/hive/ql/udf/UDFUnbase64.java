@@ -21,6 +21,7 @@ package net.mooncloud.hadoop.hive.ql.udf;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDF;
+import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 
@@ -39,22 +40,25 @@ public class UDFUnbase64 extends UDF {
 		return result;
 	}
 
-	public BytesWritable evaluate(Text value, Text alphabet) {
+	public BytesWritable evaluate(Text value, Text alphabet) throws Exception {
 		if (value == null || alphabet == null) {
 			return null;
 		}
 
 		char[] CA = alphabet.toString().toCharArray();
 		if (CA.length != 64) {
-			throw new IllegalArgumentException("The length of alphabet must be 64.");
+			throw new UDFArgumentTypeException(0,
+					"The length of alphabet must be 64.");
 		}
 
 		net.mooncloud.hadoop.hive.ql.util.Base64.alphabet(CA);
 
-//		byte[] bytes = new byte[value.getLength()];
-//		System.arraycopy(value.getBytes(), 0, bytes, 0, value.getLength());
-//		byte[] decoded = net.mooncloud.hadoop.hive.ql.util.Base64.decode(bytes);
-		byte[] decoded = net.mooncloud.hadoop.hive.ql.util.Base64.decode(value.toString());
+		// byte[] bytes = new byte[value.getLength()];
+		// System.arraycopy(value.getBytes(), 0, bytes, 0, value.getLength());
+		// byte[] decoded =
+		// net.mooncloud.hadoop.hive.ql.util.Base64.decode(bytes);
+		byte[] decoded = net.mooncloud.hadoop.hive.ql.util.Base64.decode(value
+				.toString());
 		result.set(decoded, 0, decoded.length);
 		return result;
 	}

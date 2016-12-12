@@ -36,8 +36,8 @@ import org.apache.hadoop.io.BytesWritable;
  * UDFRSAKeyGen.
  *
  */
-@Description(name = "rsa_keygen", value = "_FUNC_() - 生成密钥对(公钥和私钥)")
-public class UDFRSAKeyGen extends GenericUDF {
+@Description(name = "rsa_keygen", value = "_FUNC_() - RSAKeyGen(0-PUBLIC_KEY/1-PRIVATE_KEY)")
+public class GenericUDFRSAKeyGen extends GenericUDF {
 	BytesWritable PRIVATE_KEY;
 	BytesWritable PUBLIC_KEY;
 

@@ -367,10 +367,15 @@ public class RSAUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Map<String, Object> keyMap = RSAUtils.genKeyPair(512);
-		System.out.println("PublicKey = " + Base64.encodeToString(RSAUtils.getPublicKey(keyMap)));
-		System.out.println("PrivateKey = " + Base64.encodeToString(RSAUtils.getPrivateKey(keyMap)));
-		String plainText = "Tom";// 5p2o5bu65YWa
+//		Map<String, Object> keyMap = RSAUtils.genKeyPair(512);
+//		byte[] PublicKey = RSAUtils.getPublicKey(keyMap);
+//		byte[] PrivateKey = RSAUtils.getPrivateKey(keyMap);
+		Base64.alphabet(Base64.CAURL);
+		byte[] PublicKey = Base64.decode("MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALWH4UKDn59fH9r8t1rgiAY7whkmHSJizIE2gdSgx2oVJ505GTej9qxzmY0O5V4jwzRjumyfimsGMV_CXey7_skCAwEAAQ");
+		byte[] PrivateKey = Base64.decode("MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAtYfhQoOfn18f2vy3WuCIBjvCGSYdImLMgTaB1KDHahUnnTkZN6P2rHOZjQ7lXiPDNGO6bJ-KawYxX8Jd7Lv-yQIDAQABAkAfbKtJCWILg7sO_Kp899t0QMoD8n4eor3GLHpjJYX_zei5w_jm3SFwM1WggEj_U_r9ATU5-ho0s7wYdhKh3rTRAiEA7QVi26HoSIKGFAUILgGu4E_b8pPrjx0DoTUdnilo9oUCIQDEEQSNLOU3N1Yo0MFXFcLLzxydPVXnbesT2f4PK6hEdQIhAL9VIcB6qrAd7W4rwbah1TFuRfdEQVt96HgyEH6knv6hAiBQBlYiPQnNUKO1Awd2wOYCA6W9M_SlAgMp1hbRIFOMpQIgEtRRZl4UoDJu5MEM9gAEf4AuuYfvqzhiQ5EgRt08ZZw");
+		System.out.println("PublicKey = " + Base64.encodeToString(PublicKey));
+		System.out.println("PrivateKey = " + Base64.encodeToString(PrivateKey));
+		String plainText = "13732262669";// 5p2o5bu65YWa
 		System.out.println("plainText = " + plainText);
 		System.out.println("base64Text = " + Base64.encodeToString(plainText));
 		System.out.println("base64Text = "
@@ -379,35 +384,36 @@ public class RSAUtils {
 
 		System.out.println("数字签名");
 		byte[] sign = RSAUtils.sign(StringUtils.getBytesUtf8(plainText),
-				RSAUtils.getPrivateKey(keyMap));
+				PrivateKey);
 		String signText = Base64.encodeToString(sign);
 		System.out.println("signText = " + signText);
 		boolean verify = RSAUtils.verify(StringUtils.getBytesUtf8(plainText),
-				RSAUtils.getPublicKey(keyMap), sign);
+				PublicKey, sign);
 		System.out.println("verify = " + verify);
 
-		System.out.println("公钥加密");
-		byte[] encryptedData = RSAUtils.encryptByPublicKey(
-				StringUtils.getBytesUtf8(plainText),
-				RSAUtils.getPublicKey(keyMap));
-		System.out.println("encryptText = "
-				+ Base64.encodeToString(encryptedData));
+//		System.out.println("公钥加密");
+//		byte[] encryptedData = RSAUtils.encryptByPublicKey(
+//				StringUtils.getBytesUtf8(plainText),
+//				PublicKey);
+//		System.out.println("encryptText = "
+//				+ Base64.encodeToString(encryptedData));
+		byte[] encryptedData = Base64.decode("gkj-CfbGV-LIzoR09iI_Zv6lZ7g0Af2smkxtYyXkeeo2cdANcEk0YvN7SygzB6270Vo9uz8y7F941JwpNM2BRw");
 		System.out.println("私钥解密");
 		byte[] decryptedData = RSAUtils.decryptByPrivateKey(encryptedData,
-				RSAUtils.getPrivateKey(keyMap));
+				PrivateKey);
 		System.out.println("plainText = "
 				+ StringUtils.newStringUtf8(decryptedData));
 
-		System.out.println("私钥加密");
-		encryptedData = RSAUtils.encryptByPrivateKey(
-				StringUtils.getBytesUtf8(plainText),
-				RSAUtils.getPrivateKey(keyMap));
-		System.out.println("encryptText = "
-				+ Base64.encodeToString(encryptedData));
-		System.out.println("公钥解密");
-		decryptedData = RSAUtils.decryptByPublicKey(encryptedData,
-				RSAUtils.getPublicKey(keyMap));
-		System.out.println("plainText = "
-				+ StringUtils.newStringUtf8(decryptedData));
+//		System.out.println("私钥加密");
+//		encryptedData = RSAUtils.encryptByPrivateKey(
+//				StringUtils.getBytesUtf8(plainText),
+//				PrivateKey);
+//		System.out.println("encryptText = "
+//				+ Base64.encodeToString(encryptedData));
+//		System.out.println("公钥解密");
+//		decryptedData = RSAUtils.decryptByPublicKey(encryptedData,
+//				PublicKey);
+//		System.out.println("plainText = "
+//				+ StringUtils.newStringUtf8(decryptedData));
 	}
 }

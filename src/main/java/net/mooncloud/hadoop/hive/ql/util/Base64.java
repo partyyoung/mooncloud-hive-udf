@@ -6,8 +6,11 @@ import org.apache.commons.codec.binary.StringUtils;
 
 public class Base64 {
 
-	private static char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+	public static final char[] CACOMMON = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 			.toCharArray();
+	public static final char[] CAURL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+			.toCharArray();
+	public static char[] CA = CACOMMON;
 	private static int[] IA = new int[256];
 	static {
 		Arrays.fill(IA, -1);
@@ -24,7 +27,7 @@ public class Base64 {
 		IA['='] = 0;
 	}
 
-	private final static boolean doPadding = true;
+	private final static boolean doPadding = false;
 
 	private final static int outLength(int srclen) {
 		int len = 0;

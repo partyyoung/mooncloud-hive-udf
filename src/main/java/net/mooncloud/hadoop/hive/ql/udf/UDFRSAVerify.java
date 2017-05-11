@@ -18,7 +18,7 @@
 
 package net.mooncloud.hadoop.hive.ql.udf;
 
-import net.mooncloud.hadoop.hive.ql.util.RSAUtils;
+import net.mooncloud.hadoop.hive.ql.util.RSA;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.hive.ql.exec.Description;
@@ -56,7 +56,7 @@ public class UDFRSAVerify extends UDF {
 			System.arraycopy(sign.getBytes(), 0, signbytes, 0, sign.getLength());
 			byte[] signdecoded = Base64.decodeBase64(signbytes);
 
-			result = new BooleanWritable(RSAUtils.verify(n.getBytes(),
+			result = new BooleanWritable(RSA.verify(n.getBytes(),
 					publicKeydecoded, signdecoded));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,7 +71,7 @@ public class UDFRSAVerify extends UDF {
 		}
 
 		try {
-			result = new BooleanWritable(RSAUtils.verify(b.getBytes(),
+			result = new BooleanWritable(RSA.verify(b.getBytes(),
 					publicKey.getBytes(), sign.getBytes()));
 		} catch (Exception e) {
 			e.printStackTrace();

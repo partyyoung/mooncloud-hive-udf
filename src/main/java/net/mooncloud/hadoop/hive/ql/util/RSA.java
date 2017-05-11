@@ -38,7 +38,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * @date 2012-4-26
  * @version 1.0
  */
-public class RSAUtils {
+public class RSA {
 
 	/** */
 	/**
@@ -383,11 +383,11 @@ public class RSAUtils {
 						.getBytesUtf8(plainText))));
 
 		System.out.println("数字签名");
-		byte[] sign = RSAUtils.sign(StringUtils.getBytesUtf8(plainText),
+		byte[] sign = RSA.sign(StringUtils.getBytesUtf8(plainText),
 				PrivateKey);
 		String signText = Base64.encodeToString(sign);
 		System.out.println("signText = " + signText);
-		boolean verify = RSAUtils.verify(StringUtils.getBytesUtf8(plainText),
+		boolean verify = RSA.verify(StringUtils.getBytesUtf8(plainText),
 				PublicKey, sign);
 		System.out.println("verify = " + verify);
 
@@ -399,7 +399,7 @@ public class RSAUtils {
 //				+ Base64.encodeToString(encryptedData));
 		byte[] encryptedData = Base64.decode("gkj-CfbGV-LIzoR09iI_Zv6lZ7g0Af2smkxtYyXkeeo2cdANcEk0YvN7SygzB6270Vo9uz8y7F941JwpNM2BRw");
 		System.out.println("私钥解密");
-		byte[] decryptedData = RSAUtils.decryptByPrivateKey(encryptedData,
+		byte[] decryptedData = RSA.decryptByPrivateKey(encryptedData,
 				PrivateKey);
 		System.out.println("plainText = "
 				+ StringUtils.newStringUtf8(decryptedData));

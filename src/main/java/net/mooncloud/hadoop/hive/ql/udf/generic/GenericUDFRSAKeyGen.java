@@ -21,7 +21,7 @@ package net.mooncloud.hadoop.hive.ql.udf.generic;
 import java.util.ArrayList;
 import java.util.Map;
 
-import net.mooncloud.hadoop.hive.ql.util.RSAUtils;
+import net.mooncloud.hadoop.hive.ql.util.RSA;
 
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
@@ -54,9 +54,9 @@ public class GenericUDFRSAKeyGen extends GenericUDF {
 	public Object evaluate(DeferredObject[] arguments) throws HiveException {
 		Map<String, Object> keyMap;
 		try {
-			keyMap = RSAUtils.genKeyPair(512);
-			PRIVATE_KEY = new BytesWritable(RSAUtils.getPrivateKey(keyMap));
-			PUBLIC_KEY = new BytesWritable(RSAUtils.getPublicKey(keyMap));
+			keyMap = RSA.genKeyPair(512);
+			PRIVATE_KEY = new BytesWritable(RSA.getPrivateKey(keyMap));
+			PUBLIC_KEY = new BytesWritable(RSA.getPublicKey(keyMap));
 			keyArrayList.add(PUBLIC_KEY);
 			keyArrayList.add(PRIVATE_KEY);
 			return keyArrayList;

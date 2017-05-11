@@ -18,7 +18,7 @@
 
 package net.mooncloud.hadoop.hive.ql.udf;
 
-import net.mooncloud.hadoop.hive.ql.util.RSAUtils;
+import net.mooncloud.hadoop.hive.ql.util.RSA;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.hive.ql.exec.Description;
@@ -51,7 +51,7 @@ public class UDFRSASign extends UDF {
 					privateKey.getLength());
 			byte[] decoded = Base64.decodeBase64(bytes);
 
-			result = new BytesWritable(RSAUtils.sign(n.getBytes(), decoded));
+			result = new BytesWritable(RSA.sign(n.getBytes(), decoded));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,7 +64,7 @@ public class UDFRSASign extends UDF {
 		}
 
 		try {
-			result = new BytesWritable(RSAUtils.sign(b.getBytes(),
+			result = new BytesWritable(RSA.sign(b.getBytes(),
 					privateKey.getBytes()));
 		} catch (Exception e) {
 			e.printStackTrace();

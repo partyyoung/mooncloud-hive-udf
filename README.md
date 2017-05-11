@@ -18,3 +18,7 @@
 * CREATE TEMPORARY FUNCTION rsa_keygen AS 'net.mooncloud.hadoop.hive.ql.udf.generic.GenericUDFRSAKeyGen';
 * CREATE TEMPORARY FUNCTION rsa_sign AS 'net.mooncloud.hadoop.hive.ql.udf.UDFRSASign';
 * CREATE TEMPORARY FUNCTION rsa_verify AS 'net.mooncloud.hadoop.hive.ql.udf.UDFRSAVerify';
+
+### AES
+* CREATE TEMPORARY FUNCTION aes_encode AS 'net.mooncloud.hadoop.hive.ql.udf.UDFAESEncode';
+* CREATE TEMPORARY FUNCTION aes_decode AS 'net.mooncloud.hadoop.hive.ql.udf.UDFASEDecode';

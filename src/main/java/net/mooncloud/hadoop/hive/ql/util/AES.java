@@ -17,10 +17,15 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.utils.Charsets;
 
 public class AES {
-	static final String algorithmStr = "AES/ECB/PKCS5Padding";
+	static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
+	static final String ALGORITHM = "AES";
 	private static KeyGenerator keyGen;
 	private static Cipher cipher;
 	static boolean isInited = false;
+
+	static byte[] DefaultKeyBytes = DigestUtils
+			.md5Hex(new String(TRANSFORMATION.getBytes(), Charsets.UTF_8))
+			.substring(5, 21).getBytes();
 
 	static {
 		init();
@@ -28,13 +33,13 @@ public class AES {
 
 	private static void init() {
 		try {
-			keyGen = KeyGenerator.getInstance("AES");
+			keyGen = KeyGenerator.getInstance(ALGORITHM);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		keyGen.init(128);
 		try {
-			cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			cipher = Cipher.getInstance(TRANSFORMATION);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
@@ -55,7 +60,7 @@ public class AES {
 		if (!isInited) {
 			init();
 		}
-		Key key = new SecretKeySpec(keyBytes, "AES");
+		Key key = new SecretKeySpec(keyBytes, ALGORITHM);
 		try {
 			cipher.init(1, key);
 		} catch (InvalidKeyException e) {
@@ -72,24 +77,7 @@ public class AES {
 	}
 
 	public static byte[] Encrypt(byte[] content) {
-		byte[] encryptedText = null;
-		if (!isInited) {
-			init();
-		}
-		Key key = new SecretKeySpec(theKeyBytes, "AES");
-		try {
-			cipher.init(1, key);
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		}
-		try {
-			encryptedText = cipher.doFinal(content);
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			e.printStackTrace();
-		}
-		return encryptedText;
+		return Encrypt(content, DefaultKeyBytes);
 	}
 
 	public static byte[] DecryptToBytes(byte[] content, byte[] keyBytes) {
@@ -97,7 +85,7 @@ public class AES {
 		if (!isInited) {
 			init();
 		}
-		Key key = new SecretKeySpec(keyBytes, "AES");
+		Key key = new SecretKeySpec(keyBytes, ALGORITHM);
 		try {
 			cipher.init(2, key);
 		} catch (InvalidKeyException e) {
@@ -118,7 +106,7 @@ public class AES {
 		if (!isInited) {
 			init();
 		}
-		Key key = new SecretKeySpec(theKeyBytes, "AES");
+		Key key = new SecretKeySpec(DefaultKeyBytes, ALGORITHM);
 		try {
 			cipher.init(2, key);
 		} catch (InvalidKeyException e) {
@@ -150,7 +138,7 @@ public class AES {
 
 	public static byte[] hex2byte(byte[] b) {
 		if (b.length % 2 != 0) {
-			throw new IllegalArgumentException("������������������");
+			throw new IllegalArgumentException("长度不是偶数");
 		}
 		byte[] b2 = new byte[b.length / 2];
 		for (int n = 0; n < b.length; n += 2) {
@@ -221,10 +209,6 @@ public class AES {
 				key.getBytes());
 		return new String(decryptToBytes);
 	}
-
-	static byte[] theKeyBytes = DigestUtils
-			.md5Hex(new String("AES/ECB/PKCS5Padding".getBytes(),
-					Charsets.UTF_8)).substring(5, 21).getBytes();
 
 	// .md5("AES/ECB/PKCS5Padding").substring(5, 21).getBytes();
 

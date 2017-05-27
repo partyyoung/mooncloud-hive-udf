@@ -31,7 +31,7 @@ import org.apache.hadoop.io.Text;
 @Description(name = "aes_decode", value = "_FUNC_(text[, key]) - 解密.", extended = "")
 public class UDFASEDecode extends UDF {
 
-	private Text result = null;
+	private Text result = new Text();
 
 	public Text evaluate(Text text, Text key) {
 		if (text == null || key == null) {

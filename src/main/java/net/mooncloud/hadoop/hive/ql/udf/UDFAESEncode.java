@@ -33,7 +33,7 @@ import org.apache.hadoop.io.Text;
 		+ "  > SELECT _FUNC_('Tom', 'f8uNVRaoVMxhTC7d0TdTVlIvWXDX4xAsVSK0OqHzhqN1kNN7+paRNR/q2dC0OZN6BPl1WeVrPLoEZLT8jo9s3Q==');")
 public class UDFAESEncode extends UDF {
 
-	private Text result = null;
+	private Text result = new Text();
 
 	public Text evaluate(Text text, Text key) {
 		if (text == null || key == null) {

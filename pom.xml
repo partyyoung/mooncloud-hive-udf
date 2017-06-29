@@ -25,11 +25,13 @@
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-exec</artifactId>
 			<version>${hadoop.core}</version>
+			<!-- <scope>provider</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
 			<version>${hadoop.core}</version>
+			<!-- <scope>provider</scope> -->
 		</dependency>
 	</dependencies>
 </project>

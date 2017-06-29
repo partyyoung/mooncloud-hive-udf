@@ -1,6 +1,9 @@
 # mooncloud-hive-udf
 > ADD JAR '[path]mooncloud-hive-udf-0.0.1-SNAPSHOT.jar';
 
+### utils
+* CREATE TEMPORARY FUNCTION split_cols AS 'net.mooncloud.hadoop.hive.ql.udf.generic.GenericUDTFSplit';
+
 ### base64
 * CREATE TEMPORARY FUNCTION mc_base64 AS 'net.mooncloud.hadoop.hive.ql.udf.UDFBase64';
 * CREATE TEMPORARY FUNCTION mc_unbase64 AS 'net.mooncloud.hadoop.hive.ql.udf.UDFUnbase64';

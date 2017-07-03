@@ -32,14 +32,14 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectIn
 import org.apache.hadoop.io.Text;
 
 /**
- * UDFMostCommonSubsequence.
+ * GenericUDFLongestCommonSubsequence.
  * 
  * @author yangjd
  *
  */
-@Description(name = "mostCommonSubsequence", value = "_FUNC_(str1, str2) - Calculates the size of Most Common Subsequence for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
-		+ "Example:\n" + "  > SELECT _FUNC_('ABC', 'ABB');\n" + "  'AB'")
-public class GenericUDFMostCommonSubsequence extends GenericUDF {
+@Description(name = "lcs_subsequence", value = "_FUNC_(str1, str2) - Calculates the Longest Common Subsequence for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
+		+ "Example:\n" + "  > SELECT _FUNC_('BAAABABC', 'BABACACC');\n" + "  ['ABA', 'B', 'ABA', 'C'], the first element is the Longest Common Substring, and the remaining elements is the Longest Common Subsequence")
+public class GenericUDFLongestCommonSubsequence extends GenericUDF {
 	private transient ObjectInspectorConverters.Converter[] converters;
 
 	@Override
@@ -73,7 +73,7 @@ public class GenericUDFMostCommonSubsequence extends GenericUDF {
 		Text str1 = (Text) converters[0].convert(arguments[0].get());
 		Text str2 = (Text) converters[1].convert(arguments[1].get());
 
-		return CommonSubsequence.MostCommonSubsequence(str1.toString(),
+		return CommonSubsequence.LongestCommonSubsequence(str1.toString(),
 				str2.toString());
 	}
 

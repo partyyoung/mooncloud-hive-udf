@@ -25,14 +25,16 @@ import org.apache.hadoop.hive.ql.exec.UDF;
 import org.apache.hadoop.io.Text;
 
 /**
- * UDFLongestCommonSubsequence.
+ * UDFLongestCommonSubstring.
  * 
  * @author yangjd
  *
  */
-@Description(name = "longestCommSubseq", value = "_FUNC_(str1, str2) - Calculates an Longest Common Subsequence for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
-		+ "Example:\n" + "  > SELECT _FUNC_('ABC', 'ABB');\n" + "  'AB'")
-public class UDFLongestCommonSubsequence extends UDF {
+@Description(name = "lcs_substring", value = "_FUNC_(str1, str2) - Calculates the Longest Common Substring for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
+		+ "Example:\n"
+		+ "  > SELECT _FUNC_('BAAABABC', 'BABACACC');\n"
+		+ "  'ABA'")
+public class UDFLongestCommonSubstring extends UDF {
 
 	private final Text result = new Text();
 
@@ -47,7 +49,7 @@ public class UDFLongestCommonSubsequence extends UDF {
 		String szStr1 = str1.toString();
 		String szStr2 = str2.toString();
 
-		return new Text(CommonSubsequence.LongestCommonSubsequence(szStr1,
-				szStr2));
+		return new Text(
+				CommonSubsequence.LongestCommonSubstring(szStr1, szStr2));
 	}
 }

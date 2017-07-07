@@ -15,7 +15,7 @@
 * CREATE TEMPORARY FUNCTION md5 AS 'net.mooncloud.hadoop.hive.ql.udf.UDFMd5';
 
 ### Longest Common Subsequence/Substring
-* CREATE TEMPORARY FUNCTION lcs_subsequence AS 'net.mooncloud.hadoop.hive.ql.udf.generic.GenericUDFLongestCommonSubsequence';
+* CREATE TEMPORARY FUNCTION lcs/lcs_subsequence AS 'net.mooncloud.hadoop.hive.ql.udf.generic.GenericUDFLongestCommonSubsequence';
 * CREATE TEMPORARY FUNCTION lcs_substring AS 'net.mooncloud.hadoop.hive.ql.generic.UDFLongestCommonSubstring';
 
 ### RSA

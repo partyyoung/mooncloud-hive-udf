@@ -2,11 +2,23 @@ package net.mooncloud.hadoop.hive.ql.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.Text;
 
 public class CommonSubsequence {
+	private static final String[] stopwords;
+	static {
+		stopwords = new String[] { ",", ".", "`", "-", "_", "=", "?", "'", "|",
+				"\"", "(", ")", "{", "}", "[", "]", "<", ">", "*", "#", "&",
+				"^", "$", "@", "!", "~", ":", ";", "+", "/", "\\", "《", "》",
+				"—", "－", "，", "。", "、", "：", "；", "！", "·", "？", "“", "”",
+				"）", "（", "【", "】", "［", "］", "●" };
+		Arrays.sort(stopwords);
+	}
+
 	public static String LongestCommonSubstring(String str1, String str2) {
 		if (str1 == null || str2 == null || str1.length() <= 0
 				|| str2.length() <= 0)
@@ -33,78 +45,13 @@ public class CommonSubsequence {
 		return str2.substring(index, index + maxlen);
 	}
 
-	public static Object MostCommonSubsequence(String str1, String str2) {
-		if (str1 == null || str2 == null || str1.length() <= 0
-				|| str2.length() <= 0)
-			return null;
-
-		int rowCount = str1.length();
-		int colCount = str2.length();
-
-		int lcs = 0;
-		int row = 0, col = 0;
-
-		int[] c = new int[colCount];
-
-		int[][] R = new int[rowCount][colCount];// rowCount×colCount的矩阵
-
-		for (int i = 0; i < rowCount; i++) {
-			for (int j = colCount - 1; j >= 0; j--) {
-				if ((str1.charAt(i)) == (str2.charAt(j))) {
-					if (i == 0 || j == 0)
-						c[j] = 1;
-					else
-						c[j] = c[j - 1] + 1;
-					if (lcs < c[j]) {
-						lcs = c[j];
-						row = i - lcs + 1;// 最长公共子序列在str1开始的位置
-						col = j - lcs + 1;// 最长公共子序列在str2开始的位置
-					}
-				} else
-					c[j] = 0;
-				R[i][j] = c[j];// 保存公共序列关系矩阵
-			}
-		}
-
-		lcs = (lcs < str2.length() ? lcs : str2.length());
-		// String longestCommonSubsequence = str2.substring(col, col
-		// + maxlen);
-
-		int mostCommon = lcs
-				+ MostCommonSubsequence(R, 0, row - 1, 0, col - 1)
-				+ MostCommonSubsequence(R, row + lcs + 1, rowCount - 1, col
-						+ lcs + 1, colCount - 1);// 对头部和尾部求最长公共子序列
-
-		ArrayList<Text> result = new ArrayList<Text>();
-
-		result.add(new Text(String.valueOf(rowCount)));
-		result.add(new Text(String.valueOf(colCount)));
-		result.add(new Text(String.valueOf(lcs)));
-		result.add(new Text(String.valueOf(mostCommon)));
-
-		return result;
-	}
-
-	private static int MostCommonSubsequence(int[][] R, int row1, int row2,
-			int col1, int col2) {
-		if (row1 > row2 || col1 > col2)
-			return 0;
-		int max = 0;
-		int row = 0, col = 0;
-		for (int i = row2; i >= row1; i--) {
-			for (int j = col2; j >= col1; j--)
-				if (max < R[i][j]) {
-					max = R[i][j];
-					row = i;
-					col = j;
-				}
-		}
-		if (max == 0)
-			return 0;
-		return max + MostCommonSubsequence(R, row1, row - max, col1, col - max)
-				+ MostCommonSubsequence(R, row + 1, row2, col + 1, col2);
-	}
-
+	/**
+	 * https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+	 * 
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
 	public static Object LongestCommonSubsequence(final String str1,
 			final String str2) {
 		if (str1 == null || str2 == null || str1.length() <= 0
@@ -121,6 +68,8 @@ public class CommonSubsequence {
 
 		int[][] R = new int[rowCount][colCount];// rowCount×colCount的矩阵
 
+		ArrayList<Integer> lcsRowCols = new ArrayList<Integer>(4);//
+
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = colCount - 1; j >= 0; j--) {
 				if ((str1.charAt(i)) == (str2.charAt(j))) {
@@ -128,10 +77,18 @@ public class CommonSubsequence {
 						c[j] = 1;
 					else
 						c[j] = c[j - 1] + 1;
-					if (lcs < c[j]) {
+					if (lcs < c[j]) { // 出现了最长子串
 						lcs = c[j];
-						row = i - lcs + 1;// 最长公共子序列在str1开始的位置
-						col = j - lcs + 1;// 最长公共子序列在str2开始的位置
+						row = i - lcs + 1;// 最长公共子串在str1开始的位置
+						col = j - lcs + 1;// 最长公共子串在str2开始的位置
+						lcsRowCols.clear();
+						lcsRowCols.add(row); // 记录最长子串的start位置
+						lcsRowCols.add(col);
+					} else if (lcs > 0 && lcs == c[j]) { // 出现了两个最长子串
+						row = i - lcs + 1;// 最长公共子串在str1开始的位置
+						col = j - lcs + 1;// 最长公共子串在str2开始的位置
+						lcsRowCols.add(row); // 记录最长公共子串的start位置
+						lcsRowCols.add(col);
 					}
 				} else
 					c[j] = 0;
@@ -142,31 +99,49 @@ public class CommonSubsequence {
 		lcs = (lcs < str1.length() ? lcs : str1.length());
 		lcs = (lcs < str2.length() ? lcs : str2.length());
 
-		LinkedList<Text> longestCommonSubsequence = new LinkedList<Text>();
-		Text longestCommonSubstring = new Text(str2.substring(col, col + lcs));
-		longestCommonSubsequence.add(longestCommonSubstring);
+		LinkedList<Text> longestCommonSubsequenceFinal = null;
+		for (int i = 0; i < lcsRowCols.size(); i += 2) {
 
-		// 对头部求最长公共子序列
-		longestCommonSubsequence
-				.addAll(0,
-						LongestCommonSubsequence(str1, str2, R, 0, row - 1, 0,
-								col - 1));
+			row = lcsRowCols.get(i);
+			col = lcsRowCols.get(i + 1);
 
-		// 对尾部求最长公共子序列
-		longestCommonSubsequence.addAll(LongestCommonSubsequence(str1, str2, R,
-				row + lcs + 1, rowCount - 1, col + lcs + 1, colCount - 1));
+			LinkedList<Text> longestCommonSubsequence = new LinkedList<Text>();
+			Text longestCommonSubstring = new Text(str2.substring(col, col
+					+ lcs));
+			longestCommonSubsequence.add(longestCommonSubstring);
 
-		// 最长公共子串 LongestCommonSubstring
-		longestCommonSubsequence.add(0, longestCommonSubstring);
-		return longestCommonSubsequence;
+			// 对头部求最长公共子序列
+			longestCommonSubsequence.addAll(
+					0,
+					LongestCommonSubsequence(str1, str2, R, 0, row - 1, 0,
+							col - 1));
+
+			// 对尾部求最长公共子序列
+			longestCommonSubsequence.addAll(LongestCommonSubsequence(str1,
+					str2, R, row + lcs + 1, rowCount - 1, col + lcs + 1,
+					colCount - 1));
+
+			// 最长公共子串 LongestCommonSubstring
+			// longestCommonSubsequence.add(0, longestCommonSubstring);
+
+			if (longestCommonSubsequenceFinal == null
+					|| longestCommonSubsequenceFinal.size() < longestCommonSubsequence
+							.size()) {
+				longestCommonSubsequenceFinal = longestCommonSubsequence;
+			}
+		}
+
+		return longestCommonSubsequenceFinal != null ? longestCommonSubsequenceFinal
+				: new LinkedList<Text>();
 	}
 
 	private static LinkedList<Text> LongestCommonSubsequence(final String str1,
 			final String str2, final int[][] R, int row1, int row2, int col1,
 			int col2) {
-		LinkedList<Text> longestCommonSubsequence = new LinkedList<Text>();
+		LinkedList<Text> longestCommonSubsequenceFinal = new LinkedList<Text>();
 		if (row1 > row2 || col1 > col2)
-			return longestCommonSubsequence;
+			return longestCommonSubsequenceFinal;
+		ArrayList<Integer> lcsRowCols = new ArrayList<Integer>(4);
 		int lcs = 0;
 		int row = 0, col = 0;
 		for (int i = row2; i >= row1; i--) {
@@ -175,26 +150,249 @@ public class CommonSubsequence {
 					lcs = R[i][j];
 					row = i - lcs + 1;
 					col = j - lcs + 1;
+					row = row < row1 ? row1 : row;
+					col = col < col1 ? col1 : col;
+					lcsRowCols.clear();
+					lcsRowCols.add(row);
+					lcsRowCols.add(col);
+				} else if (lcs > 0 && lcs == R[i][j]) { // 出现了两个最长子串
+					row = i - lcs + 1;// 最长公共子串在str1开始的位置
+					col = j - lcs + 1;// 最长公共子串在str2开始的位置
+					row = row < row1 ? row1 : row;
+					col = col < col1 ? col1 : col;
+					lcsRowCols.add(row); // 记录最长公共子串的start位置
+					lcsRowCols.add(col);
 				}
 		}
 		if (lcs == 0)
-			return longestCommonSubsequence;
-		longestCommonSubsequence.add(new Text(str2.substring(col, col + lcs)));
-		longestCommonSubsequence.addAll(
-				0,
-				LongestCommonSubsequence(str1, str2, R, row1, row - 1, col1,
-						col - 1));
-		longestCommonSubsequence.addAll(LongestCommonSubsequence(str1, str2, R,
-				row + lcs + 1, row2, col + lcs + 1, col2));
+			return longestCommonSubsequenceFinal;
+		for (int i = 0; i < lcsRowCols.size(); i += 2) {
+			LinkedList<Text> longestCommonSubsequence = new LinkedList<Text>();
+			row = lcsRowCols.get(i);
+			col = lcsRowCols.get(i + 1);
+			longestCommonSubsequence.add(new Text(str2
+					.substring(col, col + lcs)));
+			longestCommonSubsequence.addAll(
+					0,
+					LongestCommonSubsequence(str1, str2, R, row1, row - 1,
+							col1, col - 1));
+			longestCommonSubsequence.addAll(LongestCommonSubsequence(str1,
+					str2, R, row + lcs + 1, row2, col + lcs + 1, col2));
+			if (longestCommonSubsequenceFinal.size() < longestCommonSubsequence
+					.size()) {
+				longestCommonSubsequenceFinal = longestCommonSubsequence;
+			}
+		}
+		return longestCommonSubsequenceFinal;
+	}
+
+	/**
+	 * https://en.wikipedia.org/wiki/Levenshtein_distance
+	 * 
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
+	public static Object LCSwithLevenshteinDistance(final String str1,
+			final String str2) {
+
+		int[][] R = LevenshteinDistanceWagnerFischerMatrix(str1, str2);
+		int rowCount = R.length;
+		int colCount = R[0].length;
+
+		LinkedList<Text> longestCommonSubsequence = new LinkedList<Text>();
+		int lcs = 0;
+		for (int i = rowCount - 1, j = colCount - 1; i != 0 || j != 0;) {
+			if (i == 0 || j == 0) {
+				if (lcs > 0) {
+					longestCommonSubsequence.add(0,
+							new Text(str1.substring(i, i + lcs)));
+					lcs = 0;
+				}
+			}
+			if (i == 0) {
+				j--;
+				continue;
+			}
+			if (j == 0) {
+				i--;
+				continue;
+			}
+
+			int distance = R[i][j];
+			int substitution = R[i - 1][j - 1];
+			int deletion = R[i - 1][j];
+			int insertion = R[i][j - 1];
+			if (deletion >= substitution && insertion >= substitution
+					&& substitution == distance) {
+				lcs++;
+				i--;
+				j--;
+				continue;
+			} else {
+				if (lcs > 0) {
+					longestCommonSubsequence.add(0,
+							new Text(str1.substring(i, i + lcs)));
+					lcs = 0;
+				}
+			}
+			if (deletion <= insertion) {
+				if (deletion <= substitution) {
+					i--;
+				} else {
+					i--;
+					j--;
+				}
+			} else {
+				if (insertion <= substitution) {
+					j--;
+				} else {
+					i--;
+					j--;
+				}
+			}
+		}
 		return longestCommonSubsequence;
 	}
 
+	/**
+	 * https://en.wikipedia.org/wiki/Levenshtein_distance
+	 * 
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
+	public static Object LevenshteinDistance(final String str1,
+			final String str2) {
+
+		int[][] R = LevenshteinDistanceWagnerFischerMatrix(str1, str2);
+		int rowCount = R.length;
+		int colCount = R[0].length;
+
+		int[] result = new int[4];
+		result[0] = R[rowCount - 1][colCount - 1];
+
+		// LinkedList<Text> longestCommonSubsequence = new LinkedList<Text>();
+		// int lcs = 0;
+		for (int i = rowCount - 1, j = colCount - 1; i != 0 || j != 0;) {
+			// if (i == 0 || j == 0) {
+			// if (lcs > 0) {
+			// longestCommonSubsequence.add(0,
+			// new Text(str1.substring(i, i + lcs)));
+			// lcs = 0;
+			// }
+			// }
+			if (i == 0) {
+				result[3]++;
+				j--;
+				continue;
+			}
+			if (j == 0) {
+				result[2]++;
+				i--;
+				continue;
+			}
+
+			int distance = R[i][j];
+			int substitution = R[i - 1][j - 1];
+			int deletion = R[i - 1][j];
+			int insertion = R[i][j - 1];
+			if (deletion >= substitution && insertion >= substitution
+					&& substitution == distance) {
+				// lcs++;
+				i--;
+				j--;
+				continue;
+			} else {
+				// if (lcs > 0) {
+				// longestCommonSubsequence.add(0,
+				// new Text(str1.substring(i, i + lcs)));
+				// lcs = 0;
+				// }
+			}
+			if (deletion <= insertion) {
+				if (deletion <= substitution) {
+					result[2]++;
+					i--;
+				} else {
+					result[1]++;
+					i--;
+					j--;
+				}
+			} else {
+				if (insertion <= substitution) {
+					result[3]++;
+					j--;
+				} else {
+					result[1]++;
+					i--;
+					j--;
+				}
+			}
+		}
+		// System.out.println(longestCommonSubsequence);
+		return Arrays.toString(result);
+	}
+
+	/**
+	 * In computer science, the Wagner–Fischer algorithm is a dynamic
+	 * programming algorithm that computes the edit distance between two strings
+	 * of characters.
+	 * 
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
+	private static int[][] LevenshteinDistanceWagnerFischerMatrix(
+			final String str1, final String str2) {
+		int rowCount = 1;
+		int colCount = 1;
+
+		if (StringUtils.isNotEmpty(str1))
+			rowCount = str1.length() + 1;
+		if (StringUtils.isNotEmpty(str2))
+			colCount = str2.length() + 1;
+
+		int[][] R = new int[rowCount][colCount];// rowCount×colCount的矩阵
+
+		for (int i = 1; i < rowCount; i++) {
+			R[i][0] = i;
+		}
+		for (int j = 1; j < colCount; j++) {
+			R[0][j] = j;
+		}
+
+		// System.out.println(Arrays.toString(R[0]));
+		for (int i = 1; i < rowCount; i++) {
+			for (int j = 1; j < colCount; j++) {
+				int substitutionCost = 1;
+				if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+					substitutionCost = 0;
+				}
+				int deletion = R[i - 1][j] + 1;
+				int insertion = R[i][j - 1] + 1;
+				int substitution = R[i - 1][j - 1] + substitutionCost;
+				R[i][j] = Math.min(substitution, Math.min(deletion, insertion));
+			}
+			// System.out.println(Arrays.toString(R[i]));
+		}
+
+		return R;
+	}
+
 	public static void main(String[] args) throws IOException {
-		String a = "【民生银行】您信用卡附属卡*4841于3日19:35转账转入人民币2130.00元。民生卡手机支付，7月底前周一星巴克(非江浙沪)满60减20";
-		String b = "【民生银行】您信用卡附属卡*4841于3日19:35转账转入人民币12130.00元。民生卡手机支付，7月底前周一星巴克(非江浙沪)满60减20";
-		a = "BAAABABC";
-		b = "BABACACC";
+		String a = "XMJYAUZ";
+		String b = "MZJAWXU";
+		// a = "Sunday";
+		// b = "Saturday";
+		a = "BANANA";
+		b = "ATANATA";
+		a = "sitting";
+		b = "kitten";
+		a = "";
+		b = "kitten";
 		System.out.println(LongestCommonSubstring(a, b));
 		System.out.println(LongestCommonSubsequence(a, b));
+		System.out.println(LevenshteinDistance(a, b));
 	}
 }

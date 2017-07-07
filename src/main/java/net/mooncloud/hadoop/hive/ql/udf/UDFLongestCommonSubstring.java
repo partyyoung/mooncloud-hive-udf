@@ -31,15 +31,11 @@ import org.apache.hadoop.io.Text;
  *
  */
 @Description(name = "lcs_substring", value = "_FUNC_(str1, str2) - Calculates the Longest Common Substring for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
-		+ "Example:\n"
-		+ "  > SELECT _FUNC_('BAAABABC', 'BABACACC');\n"
-		+ "  'ABA'")
+		+ "Example:\n" + "  > SELECT _FUNC_('BANANA', 'ATANA');\n" + "  'ANA'")
 public class UDFLongestCommonSubstring extends UDF {
 
-	private final Text result = new Text();
-
 	/**
-	 * Longest Common Subsequence
+	 * Longest Common Substring
 	 */
 	public Text evaluate(Text str1, Text str2) {
 		if (str1 == null || str2 == null) {

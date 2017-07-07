@@ -37,8 +37,10 @@ import org.apache.hadoop.io.Text;
  * @author yangjd
  *
  */
-@Description(name = "lcs_subsequence", value = "_FUNC_(str1, str2) - Calculates the Longest Common Subsequence for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
-		+ "Example:\n" + "  > SELECT _FUNC_('BAAABABC', 'BABACACC');\n" + "  ['ABA', 'B', 'ABA', 'C'], the first element is the Longest Common Substring, and the remaining elements is the Longest Common Subsequence")
+@Description(name = "lcs,lcs_subsequence", value = "_FUNC_(str1, str2) - Calculates the Longest Common Subsequence for the two strings.", extended = "The value is returned as a string, or NULL if the argument was NULL.\n"
+		+ "Example:\n"
+		+ "  > SELECT _FUNC_('BANANA', 'ATANA');\n"
+		+ "  ['A', 'ANA'], the Longest Common Subsequence(LCS)")
 public class GenericUDFLongestCommonSubsequence extends GenericUDF {
 	private transient ObjectInspectorConverters.Converter[] converters;
 
@@ -73,14 +75,14 @@ public class GenericUDFLongestCommonSubsequence extends GenericUDF {
 		Text str1 = (Text) converters[0].convert(arguments[0].get());
 		Text str2 = (Text) converters[1].convert(arguments[1].get());
 
-		return CommonSubsequence.LongestCommonSubsequence(str1.toString(),
+		return CommonSubsequence.LCSwithLevenshteinDistance(str1.toString(),
 				str2.toString());
 	}
 
 	@Override
 	public String getDisplayString(String[] children) {
 		assert (children.length == 2);
-		return getStandardDisplayString("mostCommonSubsequence", children);
+		return getStandardDisplayString("lcs", children);
 	}
 
 }
